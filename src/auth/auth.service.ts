@@ -9,16 +9,22 @@ export class AuthService {
     private authRepository: typeof Auth,
   ) {}
 
-  async create(createUserDto: CreateUserDto) {
+  create(createUserDto: CreateUserDto) {
     return this.authRepository.findOrCreate({
       where: { email: createUserDto.email },
       defaults: { ...createUserDto },
     });
   }
 
-  async getUserByEmail(email: string) {
+  getUserByEmail(email: string) {
     return this.authRepository.findOne({
       where: { email },
+    });
+  }
+
+  checkIsAvailableNickname(nickname: string) {
+    return this.authRepository.findOne({
+      where: { nickname },
     });
   }
 }

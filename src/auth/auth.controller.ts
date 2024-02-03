@@ -11,6 +11,7 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto, LoginUserResponceDto } from './dto/login-user.dto';
+import { CheckNicknameDto } from './dto/check-nickname.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -57,12 +58,32 @@ export class AuthController {
       );
     }
 
-    const accessToken = await this.jwtService.signAsync({ id: user.id, email: user.email });
+    const accessToken = await this.jwtService.signAsync({
+      id: user.id,
+      email: user.email,
+    });
 
     return {
       accessToken,
       email: user.email,
       nickname: user.nickname,
     };
+  }
+
+  @ApiResponse({ status: 200, description: 'Nickname is available' })
+  @Post('checkNickname')
+  async checkIsAvailableNickname(@Body() checkNicknameDto: CheckNicknameDto) {
+    const isAvailable = await this.authService.checkIsAvailableNickname(
+      checkNicknameDto.nickname,
+    );
+
+    if (!isAvailable) {
+      throw new HttpException(
+        'Nickname already exists',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    return { message: 'Nickname is available' };
   }
 }
