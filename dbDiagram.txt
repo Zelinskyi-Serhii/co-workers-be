@@ -1,0 +1,32 @@
+Table user {
+  id integer [PK]
+  email string [not null]
+  password string [not null]
+  nickname string [not null] 
+  avatarURL string [not null]
+  isAdmin boolean [not null]
+}
+
+Table company {
+  id integer [PK]
+  userId integer [not null]
+  name string [not null]
+  avatarUrl string [not null]
+  ownedAt string [not null]
+  ownerName string [not null]
+}
+
+Table employee {
+  id integer [PK]
+  companyId integer [not null]
+  firstname string [not null]
+  lastname strring [not null]
+  position string [not null]
+  hireDate string [not null]
+  avatarUrl string [not null]
+  birthday string [not null]
+  isDismissed boolean [not null]
+}
+
+Ref: user.id < company.userId
+Ref: company.id < employee.companyId

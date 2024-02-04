@@ -19,6 +19,7 @@ export class CompanyService {
   deleteCompany(id: number, userId: number) {
     return this.companyRepository.destroy({
       where: { id, userId },
+      cascade: true,
     });
   }
 }
