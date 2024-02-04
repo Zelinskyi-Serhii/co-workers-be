@@ -1,10 +1,14 @@
 import {
   Body,
   Controller,
+  Delete,
   HttpException,
   HttpStatus,
   Post,
+  Put,
+  Req,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -16,6 +20,8 @@ import { LoginUserDto, LoginUserResponceDto } from './dto/login-user.dto';
 import { CheckNicknameDto } from './dto/check-nickname.dto';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { AuthGuard } from './auth.guard';
+import { UploadAvatarDto, UploadAvatarResponseDto } from './dto/upload-avatar.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -92,12 +98,29 @@ export class AuthController {
     return { message: 'Nickname is available' };
   }
 
-  @ApiResponse({ status: 200, description: 'Avatar uploaded successfully' })
-  @Post('uploadAvatar')
+  @ApiResponse({ status: 200, type: UploadAvatarResponseDto })
+  @Put('changeAvatar')
+  @UseGuards(AuthGuard)
   @UseInterceptors(FileInterceptor('image'))
-  async uploadAvatar(@UploadedFile() image) {
+  async uploadAvatar(@UploadedFile() image: UploadAvatarDto, @Req() request) {
+    const { currentUserId } = request;
+
     const url = await this.cloudinaryService.uploadImage(image);
+    // const url = await this.cloudinaryService.uploadImage(body.file);
+
+    await this.authService.updateUser(currentUserId, { avatarUrl: url });
 
     return { message: 'Avatar uploaded successfully', url };
+  }
+
+  @ApiResponse({ status: 200, description: 'User deleted successfully' })
+  @Delete('delete')
+  @UseGuards(AuthGuard)
+  async deleteUser(@Req() request) {
+    const { currentUserEmail } = request;
+
+    await this.authService.deleteUserByEmail(currentUserEmail);
+
+    return { message: 'User deleted successfully' };
   }
 }

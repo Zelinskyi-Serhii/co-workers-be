@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { authProviders } from './auth.providers';
-import { DatabaseModule } from 'src/database/database.module';
+import { authProviders } from './auth.provider';
+import { DatabaseModule } from '../database/database.module';
 import { JwtModule } from '@nestjs/jwt';
-import { CloudinaryModule } from 'src/cloudinary/cloudinary.module';
+import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -18,5 +18,6 @@ import { CloudinaryModule } from 'src/cloudinary/cloudinary.module';
   ],
   controllers: [AuthController],
   providers: [AuthService, ...authProviders],
+  exports: [AuthService],
 })
 export class AuthModule {}

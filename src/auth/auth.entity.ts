@@ -1,11 +1,12 @@
 import { Table, Column, Model, DataType } from 'sequelize-typescript';
 
-interface IAuth {
+export interface IAuth {
   id: number;
   email: string;
   password: string;
   nickname: string;
   avatarUrl: string;
+  isAdmin: boolean;
 }
 
 @Table({
@@ -45,4 +46,11 @@ export class Auth extends Model<Auth, IAuth> {
       'https://res.cloudinary.com/dzuxudptr/image/upload/v1707008957/cbwum9pyene3t5viks3z.jpg',
   })
   avatarUrl: string;
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  isAdmin: boolean;
 }

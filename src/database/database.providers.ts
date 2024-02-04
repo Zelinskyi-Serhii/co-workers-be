@@ -2,6 +2,7 @@ import { Sequelize } from 'sequelize-typescript';
 import pg from 'pg';
 import 'dotenv/config';
 import { Auth } from '../auth/auth.entity';
+import { Company } from '../company/company.entity';
 
 const { DATABASE_URL } = process.env;
 
@@ -19,9 +20,9 @@ export const databaseProviders = [
           },
         },
       });
-      sequelize.addModels([Auth]);
+      sequelize.addModels([Auth, Company]);
 
-      await sequelize.sync({ alter: true });
+      await sequelize.sync({ alter: false });
 
       return sequelize;
     },
