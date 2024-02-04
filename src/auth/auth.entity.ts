@@ -36,6 +36,7 @@ export class Auth extends Model<Auth, IAuth> {
   @Column({
     type: DataType.STRING,
     allowNull: false,
+    unique: true,
   })
   nickname: string;
 
