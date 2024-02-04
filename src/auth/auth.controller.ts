@@ -4,6 +4,8 @@ import {
   HttpException,
   HttpStatus,
   Post,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import * as bcrypt from 'bcrypt';
@@ -12,6 +14,8 @@ import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto, LoginUserResponceDto } from './dto/login-user.dto';
 import { CheckNicknameDto } from './dto/check-nickname.dto';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -19,6 +23,7 @@ export class AuthController {
   constructor(
     private authService: AuthService,
     private jwtService: JwtService,
+    private cloudinaryService: CloudinaryService,
   ) {}
 
   @ApiResponse({ status: 201, description: 'User created successfully' })
@@ -85,5 +90,14 @@ export class AuthController {
     }
 
     return { message: 'Nickname is available' };
+  }
+
+  @ApiResponse({ status: 200, description: 'Avatar uploaded successfully' })
+  @Post('uploadAvatar')
+  @UseInterceptors(FileInterceptor('image'))
+  async uploadAvatar(@UploadedFile() image) {
+    const url = await this.cloudinaryService.uploadImage(image);
+
+    return { message: 'Avatar uploaded successfully', url };
   }
 }
