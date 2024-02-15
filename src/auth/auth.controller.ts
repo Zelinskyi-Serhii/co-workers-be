@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   HttpException,
   HttpStatus,
   Post,
@@ -16,7 +17,7 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { LoginUserDto, LoginUserResponceDto } from './dto/login-user.dto';
+import { GetUserInfo, LoginUserDto, LoginUserResponceDto } from './dto/login-user.dto';
 import { CheckNicknameDto } from './dto/check-nickname.dto';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -30,7 +31,18 @@ export class AuthController {
     private authService: AuthService,
     private jwtService: JwtService,
     private cloudinaryService: CloudinaryService,
-  ) {}
+  ) { }
+  
+  @ApiResponse({ status: 200, type: GetUserInfo })
+  @Get('userInfo')
+    @UseGuards(AuthGuard)
+  async getUserInfo(@Req() request) {
+    const { currentUserEmail } = request;
+
+    const user = await this.authService.getUserByEmail(currentUserEmail);
+
+    return user;
+  }
 
   @ApiResponse({ status: 201, description: 'User created successfully' })
   @Post('signup')
@@ -57,12 +69,16 @@ export class AuthController {
   async login(@Body() loginUserDto: LoginUserDto) {
     const user = await this.authService.getUserByEmail(loginUserDto.email);
 
+    if (!user) {
+      throw new HttpException('Invalid email or password', HttpStatus.BAD_REQUEST);
+    }
+
     const isPasswordMatch = await bcrypt.compare(
       loginUserDto.password,
       user.password || '',
     );
 
-    if (!isPasswordMatch || !user) {
+    if (!isPasswordMatch) {
       throw new HttpException(
         'Invalid email or password',
         HttpStatus.BAD_REQUEST,
@@ -78,6 +94,7 @@ export class AuthController {
       accessToken,
       email: user.email,
       nickname: user.nickname,
+      avatarUrl: user.avatarUrl
     };
   }
 

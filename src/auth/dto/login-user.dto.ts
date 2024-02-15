@@ -21,4 +21,18 @@ export class LoginUserResponceDto {
 
   @ApiProperty({ example: 'John' })
   readonly nickname: string;
+
+  @ApiProperty({ example: 'https://example.com' })
+  readonly avatarUrl: string;
+}
+
+export class GetUserInfo {
+  @ApiProperty({ example: 'email@example.com' })
+  readonly email: string;
+
+  @ApiProperty({ example: 'John' })
+  readonly nickname: string;
+
+  @ApiProperty({ example: 'https://example.com' })
+  readonly avatarUrl: string;
 }
