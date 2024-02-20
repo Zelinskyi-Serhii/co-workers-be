@@ -6,7 +6,9 @@ import {
   Param,
   Post,
   Req,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
 import { CompanyService } from './company.service';
@@ -15,17 +17,22 @@ import {
   CreateCompanyDto,
   CreateCompanyResponseDto,
 } from './dto/create-company.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @ApiTags('company')
 @Controller('company')
 @UseGuards(AuthGuard)
 export class CompanyController {
-  constructor(private companyService: CompanyService) {}
+  constructor(
+    private companyService: CompanyService,
+    private cloudinaryService: CloudinaryService,
+  ) {}
 
   @Get('getAll')
   @ApiResponse({ status: 200, type: [CreateCompanyResponseDto] })
   async getAllCompanies(@Req() req: { currentUserId: number }) {
-    const {currentUserId} = req;
+    const { currentUserId } = req;
     const companies = await this.companyService.getAllCompanies(currentUserId);
 
     return companies.map(company => ({
@@ -38,15 +45,18 @@ export class CompanyController {
   }
 
   @Post('create')
+  @UseInterceptors(FileInterceptor('avatarUrl'))
   @ApiResponse({ status: 201, type: CreateCompanyResponseDto })
   async createCompany(
+    @UploadedFile() avatarUrl,
     @Body() createCompanyDto: CreateCompanyDto,
     @Req() req: { currentUserId: number },
   ) {
     const currentUserId = req.currentUserId;
+    const url = await this.cloudinaryService.uploadImage(avatarUrl);
 
     const createdCompany = await this.companyService.createCompany(
-      createCompanyDto,
+      { ...createCompanyDto, avatarUrl: url },
       currentUserId,
     );
 

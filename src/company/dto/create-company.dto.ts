@@ -7,12 +7,11 @@ export class CreateCompanyDto {
   @IsNotEmpty()
   readonly name: string;
 
-  @ApiProperty({example: 'https://viso.ai/logo.png'})
-  @IsString()
-  @IsNotEmpty()
+  @ApiProperty({ example: 'https://viso.ai/logo.png' })
+  // todo: need to add validation
   readonly avatarUrl: string;
 
-  @ApiProperty({example: '2021-08-17T14:30:00.000Z'})
+  @ApiProperty({ example: '2021-08-17T14:30:00.000Z' })
   @IsString()
   @IsNotEmpty()
   readonly ownedAt: string;
