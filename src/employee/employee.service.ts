@@ -13,6 +13,9 @@ export class EmployeeService {
     return this.employeeRepository.findAll({
       where: { companyId },
       attributes: { exclude: ['companyId', 'createdAt', 'updatedAt'] },
+      order: [
+        ['id', 'ASC'],
+    ],
     });
   }
 
