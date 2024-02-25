@@ -44,7 +44,7 @@ export class AuthController {
     return user;
   }
 
-  @ApiResponse({ status: 201, description: 'User created successfully' })
+  @ApiResponse({ status: 201, type: LoginUserResponceDto })
   @Post('signup')
   async create(@Body() createUserDto: CreateUserDto) {
     const hashedPassword = await bcrypt.hash(
@@ -52,7 +52,7 @@ export class AuthController {
       Number(process.env.PASSWORD_SALT),
     );
 
-    const [, isCreated] = await this.authService.create({
+    const [user, isCreated] = await this.authService.create({
       ...createUserDto,
       password: hashedPassword,
     });
@@ -61,7 +61,17 @@ export class AuthController {
       throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
     }
 
-    return { message: 'User created successfully' };
+    const accessToken = await this.jwtService.signAsync({
+      id: user.id,
+      email: user.email,
+    });
+
+    return {
+      accessToken,
+      email: user.email,
+      nickname: user.nickname,
+      avatarUrl: user.avatarUrl
+    };
   }
 
   @ApiResponse({ status: 200, type: LoginUserResponceDto })
@@ -105,7 +115,7 @@ export class AuthController {
       checkNicknameDto.nickname,
     );
 
-    if (!isAvailable) {
+    if (isAvailable) {
       throw new HttpException(
         'Nickname already exists',
         HttpStatus.BAD_REQUEST,

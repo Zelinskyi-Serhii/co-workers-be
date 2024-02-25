@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateEmployeeDto {
   @ApiProperty({ example: 1 })
-  @IsNumber()
+  @IsNotEmpty()
   readonly companyId: number;
 
   @ApiProperty({ example: 'Serhii' })
@@ -27,8 +27,6 @@ export class CreateEmployeeDto {
   readonly hireDate: string;
 
   @ApiProperty({ example: 'https://image.png' })
-  @IsString()
-  @IsNotEmpty()
   readonly avatarUrl: string;
 
   @ApiProperty({ example: '1998-08-17T14:30:00.000Z' })
