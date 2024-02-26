@@ -23,6 +23,7 @@ import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from './auth.guard';
 import { UploadAvatarDto, UploadAvatarResponseDto } from './dto/upload-avatar.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -133,11 +134,34 @@ export class AuthController {
     const { currentUserId } = request;
 
     const url = await this.cloudinaryService.uploadImage(image);
-    // const url = await this.cloudinaryService.uploadImage(body.file);
 
     await this.authService.updateUser(currentUserId, { avatarUrl: url });
 
     return { message: 'Avatar uploaded successfully', url };
+  }
+
+  @ApiResponse({ status: 200, description: 'Password changed successfully' })
+  @Put('changePassword')
+  @UseGuards(AuthGuard)
+  async changePassword(@Body() passwordDto: ChangePasswordDto, @Req() request) {
+    const { currentUserEmail } = request;
+
+    const user = await this.authService.getUserByEmail(currentUserEmail);
+
+    const isPasswordMatch = await bcrypt.compare(passwordDto.newPassword, user.password);
+
+    if (!isPasswordMatch) {
+      throw new HttpException('Invalid old password', HttpStatus.BAD_REQUEST);
+    }
+
+    const hashedPassword = await bcrypt.hash(
+      passwordDto.newPassword,
+      Number(process.env.PASSWORD_SALT),
+    );
+
+    await this.authService.updateUser(user.id, { password: hashedPassword });
+
+    return { message: 'Password changed successfully' };
   }
 
   @ApiResponse({ status: 200, description: 'User deleted successfully' })
