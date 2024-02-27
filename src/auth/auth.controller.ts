@@ -24,6 +24,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from './auth.guard';
 import { UploadAvatarDto, UploadAvatarResponseDto } from './dto/upload-avatar.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { ChangeNicknameDto } from './dto/change-nickname.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -138,6 +139,17 @@ export class AuthController {
     await this.authService.updateUser(currentUserId, { avatarUrl: url });
 
     return { message: 'Avatar uploaded successfully', url };
+  }
+
+  @ApiResponse({ status: 200, type: 'StrongMen' })
+  @Put('changeNickname')
+  @UseGuards(AuthGuard)
+  async changeNickname(@Body() changeNicknameDto: ChangeNicknameDto, @Req() request) { 
+    const { currentUserId } = request;
+
+    await this.authService.updateUser(currentUserId, { nickname: changeNicknameDto.nickname });
+
+    return { nickname: changeNicknameDto.nickname };
   }
 
   @ApiResponse({ status: 200, description: 'Password changed successfully' })
