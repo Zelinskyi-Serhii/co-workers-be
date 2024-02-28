@@ -13,13 +13,22 @@ export class EmployeeService {
     return this.employeeRepository.findAll({
       where: { companyId },
       attributes: { exclude: ['companyId', 'createdAt', 'updatedAt'] },
-      order: [
-        ['id', 'ASC'],
-    ],
+      order: [['id', 'ASC']],
     });
   }
 
   createEmployee(dto: CreateEmployeeDto) {
     return this.employeeRepository.create(dto);
+  }
+
+  deleteEmployee(id: number) {
+    return this.employeeRepository.destroy({ where: { id } });
+  }
+
+  dismissEmployee(employeeId: number) {
+    return this.employeeRepository.update(
+      { isDismissed: true },
+      { where: { id: employeeId } },
+    );
   }
 }

@@ -1,9 +1,11 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
+  Put,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -60,5 +62,21 @@ export class EmployeeController {
       birthday: employee.birthday,
       isDismissed: employee.isDismissed,
     };
+  }
+
+  @Put('dismiss/:employeeId')
+  @ApiResponse({ status: 200, description: 'Employee updated successfully' })
+  async dismissEmployee(@Param('employeeId') employeeId: number) {
+    await this.employeeService.dismissEmployee(employeeId);
+
+    return { message: 'Employee updated successfully' };
+  }
+
+  @Delete('delete/:employeeId')
+  @ApiResponse({ status: 200, description: 'Employee deleted successfully' })
+  async deleteEmployee(@Param('employeeId') employeeId: number) {
+    await this.employeeService.deleteEmployee(employeeId);
+
+    return { message: 'Employee deleted successfully', id: employeeId };
   }
 }
