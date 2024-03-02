@@ -28,5 +28,12 @@ Table employee {
   isDismissed boolean [not null]
 }
 
+Table reviews {
+  id integer [PK]
+  employeeId integer [not null]
+  review string [not null]
+}
+
 Ref: user.id < company.userId
 Ref: company.id < employee.companyId
+Ref: employee.id < reviews.employeeId

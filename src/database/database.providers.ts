@@ -4,6 +4,7 @@ import 'dotenv/config';
 import { Auth } from '../auth/auth.entity';
 import { Company } from '../company/company.entity';
 import { Employee } from '../employee/employee.entity';
+import { Review } from '../review/review.entity';
 
 const { DATABASE_URL } = process.env;
 
@@ -21,7 +22,7 @@ export const databaseProviders = [
           },
         },
       });
-      sequelize.addModels([Auth, Company, Employee]);
+      sequelize.addModels([Auth, Company, Employee, Review]);
 
       await sequelize.sync({ alter: false });
 
