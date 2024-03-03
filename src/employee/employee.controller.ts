@@ -37,6 +37,12 @@ export class EmployeeController {
     return employees;
   }
 
+  @Get('getOne/:employeeId')
+  @ApiResponse({ status: 200, type: CreateEmployeeResponseDto })
+  async getOneEmployee(@Param('employeeId') employeeId: number) {
+    return this.employeeService.getEmployeeById(employeeId);
+  }
+
   @Post('create')
   @UseInterceptors(FileInterceptor('avatarUrl'))
   @ApiResponse({ status: 200, type: CreateEmployeeResponseDto })

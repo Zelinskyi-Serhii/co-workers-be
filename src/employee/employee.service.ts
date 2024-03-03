@@ -16,6 +16,12 @@ export class EmployeeService {
       order: [['id', 'ASC']],
     });
   }
+  getEmployeeById(employeeId: number) {
+    return this.employeeRepository.findOne({
+      where: { id: employeeId },
+      attributes: { exclude: ['createdAt', 'updatedAt'] },
+    });
+  }
 
   createEmployee(dto: CreateEmployeeDto) {
     return this.employeeRepository.create(dto);
