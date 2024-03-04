@@ -1,5 +1,13 @@
-import { BelongsTo, Column, DataType, Model, Table } from 'sequelize-typescript';
+import {
+  BelongsTo,
+  Column,
+  DataType,
+  HasMany,
+  Model,
+  Table,
+} from 'sequelize-typescript';
 import { Company } from '../company/company.entity';
+import { Review } from '../review/review.entity';
 
 interface IEmployee {
   id: number;
@@ -75,4 +83,7 @@ export class Employee extends Model<Employee, IEmployee> {
 
   @BelongsTo(() => Company, { onDelete: 'CASCADE', foreignKey: 'companyId' })
   company: Company;
+
+  @HasMany(() => Review, { onDelete: 'CASCADE', foreignKey: 'employeeId' })
+  review: Review;
 }

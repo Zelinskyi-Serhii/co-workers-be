@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Employee } from './employee.entity';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
+import { Review } from '../review/review.entity';
 
 @Injectable()
 export class EmployeeService {
@@ -13,13 +14,22 @@ export class EmployeeService {
     return this.employeeRepository.findAll({
       where: { companyId },
       attributes: { exclude: ['companyId', 'createdAt', 'updatedAt'] },
-      order: [['id', 'ASC']],
+      order: [
+        ['isDismissed', 'ASC'],
+        ['id', 'ASC'],
+      ],
     });
   }
+
   getEmployeeById(employeeId: number) {
     return this.employeeRepository.findOne({
       where: { id: employeeId },
       attributes: { exclude: ['createdAt', 'updatedAt'] },
+      include: [
+        {
+          model: Review,
+        },
+      ],
     });
   }
 

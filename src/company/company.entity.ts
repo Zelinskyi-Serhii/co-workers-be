@@ -1,4 +1,10 @@
-import { BelongsTo, Column, DataType, Model, Table } from 'sequelize-typescript';
+import {
+  BelongsTo,
+  Column,
+  DataType,
+  Model,
+  Table,
+} from 'sequelize-typescript';
 import { Auth } from '../auth/auth.entity';
 
 interface ICompany {
