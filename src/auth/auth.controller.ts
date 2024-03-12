@@ -17,12 +17,19 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { GetUserInfo, LoginUserDto, LoginUserResponceDto } from './dto/login-user.dto';
+import {
+  GetUserInfo,
+  LoginUserDto,
+  LoginUserResponceDto,
+} from './dto/login-user.dto';
 import { CheckNicknameDto } from './dto/check-nickname.dto';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from './auth.guard';
-import { UploadAvatarDto, UploadAvatarResponseDto } from './dto/upload-avatar.dto';
+import {
+  UploadAvatarDto,
+  UploadAvatarResponseDto,
+} from './dto/upload-avatar.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { ChangeNicknameDto } from './dto/change-nickname.dto';
 
@@ -33,15 +40,15 @@ export class AuthController {
     private authService: AuthService,
     private jwtService: JwtService,
     private cloudinaryService: CloudinaryService,
-  ) { }
-  
+  ) {}
+
   @ApiResponse({ status: 200, type: GetUserInfo })
   @Get('userInfo')
-    @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
   async getUserInfo(@Req() request) {
     const { currentUserEmail } = request;
 
-    const user = await this.authService.getUserByEmail(currentUserEmail);
+    const user = await this.authService.getUserInfo(currentUserEmail);
 
     return user;
   }
@@ -72,7 +79,7 @@ export class AuthController {
       accessToken,
       email: user.email,
       nickname: user.nickname,
-      avatarUrl: user.avatarUrl
+      avatarUrl: user.avatarUrl,
     };
   }
 
@@ -82,7 +89,10 @@ export class AuthController {
     const user = await this.authService.getUserByEmail(loginUserDto.email);
 
     if (!user) {
-      throw new HttpException('Invalid email or password', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Invalid email or password',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const isPasswordMatch = await bcrypt.compare(
@@ -106,7 +116,7 @@ export class AuthController {
       accessToken,
       email: user.email,
       nickname: user.nickname,
-      avatarUrl: user.avatarUrl
+      avatarUrl: user.avatarUrl,
     };
   }
 
@@ -144,10 +154,15 @@ export class AuthController {
   @ApiResponse({ status: 200, type: 'StrongMen' })
   @Put('changeNickname')
   @UseGuards(AuthGuard)
-  async changeNickname(@Body() changeNicknameDto: ChangeNicknameDto, @Req() request) { 
+  async changeNickname(
+    @Body() changeNicknameDto: ChangeNicknameDto,
+    @Req() request,
+  ) {
     const { currentUserId } = request;
 
-    await this.authService.updateUser(currentUserId, { nickname: changeNicknameDto.nickname });
+    await this.authService.updateUser(currentUserId, {
+      nickname: changeNicknameDto.nickname,
+    });
 
     return { nickname: changeNicknameDto.nickname };
   }
@@ -160,7 +175,10 @@ export class AuthController {
 
     const user = await this.authService.getUserByEmail(currentUserEmail);
 
-    const isPasswordMatch = await bcrypt.compare(passwordDto.newPassword, user.password);
+    const isPasswordMatch = await bcrypt.compare(
+      passwordDto.newPassword,
+      user.password,
+    );
 
     if (!isPasswordMatch) {
       throw new HttpException('Invalid old password', HttpStatus.BAD_REQUEST);

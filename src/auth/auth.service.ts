@@ -22,6 +22,13 @@ export class AuthService {
     });
   }
 
+  getUserInfo(email: string) {
+    return this.authRepository.findOne({
+      where: { email },
+      attributes: { exclude: ['createdAt', 'password'] },
+    });
+  }
+
   checkIsAvailableNickname(nickname: string) {
     return this.authRepository.findOne({
       where: { nickname },
