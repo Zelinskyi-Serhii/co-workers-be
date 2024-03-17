@@ -43,6 +43,15 @@ export class CompanyController {
       ownerName: company.ownerName,
     }));
   }
+  @Get('/:companyId')
+  @ApiResponse({ status: 200, type: CreateCompanyResponseDto })
+  async getCompanyById(
+    @Param('companyId') companyId: number,
+    @Req() req: { currentUserId: number },
+  ) {
+    const currentUserId = req.currentUserId;
+    return this.companyService.getCompanyById(companyId, currentUserId);
+  }
 
   @Post('create')
   @UseInterceptors(FileInterceptor('avatarUrl'))
