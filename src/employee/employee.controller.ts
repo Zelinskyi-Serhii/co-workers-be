@@ -19,6 +19,7 @@ import {
 } from './dto/create-employee.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
+import { DismissEmployeeDto } from './dto/update-employee.dto';
 
 @Controller('employee')
 @ApiTags('employee')
@@ -66,14 +67,20 @@ export class EmployeeController {
       hireDate: employee.hireDate,
       avatarUrl: employee.avatarUrl,
       birthday: employee.birthday,
-      isDismissed: employee.isDismissed,
+      dismissed: employee.dismissed,
     };
   }
 
   @Put('dismiss/:employeeId')
   @ApiResponse({ status: 200, description: 'Employee updated successfully' })
-  async dismissEmployee(@Param('employeeId') employeeId: number) {
-    await this.employeeService.dismissEmployee(employeeId);
+  async dismissEmployee(
+    @Param('employeeId') employeeId: number,
+    @Body() updateEmployeeDto: DismissEmployeeDto,
+  ) {
+    await this.employeeService.dismissEmployee(
+      employeeId,
+      updateEmployeeDto.dismissed,
+    );
 
     return { message: 'Employee updated successfully' };
   }

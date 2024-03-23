@@ -15,8 +15,8 @@ export class EmployeeService {
       where: { companyId },
       attributes: { exclude: ['companyId', 'createdAt', 'updatedAt'] },
       order: [
-        ['isDismissed', 'ASC'],
-        ['id', 'ASC'],
+        ['dismissed', 'ASC'],
+        ['hireDate', 'DESC'],
       ],
     });
   }
@@ -41,9 +41,9 @@ export class EmployeeService {
     return this.employeeRepository.destroy({ where: { id } });
   }
 
-  dismissEmployee(employeeId: number) {
+  dismissEmployee(employeeId: number, dismissDate: Date) {
     return this.employeeRepository.update(
-      { isDismissed: true },
+      { dismissed: dismissDate },
       { where: { id: employeeId } },
     );
   }

@@ -18,7 +18,7 @@ interface IEmployee {
   hireDate: string;
   avatarUrl: string;
   birthday: string;
-  isDismissed: boolean;
+  dismissed: Date | null;
 }
 
 @Table({
@@ -75,11 +75,10 @@ export class Employee extends Model<Employee, IEmployee> {
   birthday: string;
 
   @Column({
-    type: DataType.BOOLEAN,
-    allowNull: false,
-    defaultValue: false,
+    type: DataType.DATE,
+    defaultValue: null,
   })
-  isDismissed: boolean;
+  dismissed: Date;
 
   @BelongsTo(() => Company, { onDelete: 'CASCADE', foreignKey: 'companyId' })
   company: Company;

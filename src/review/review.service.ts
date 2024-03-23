@@ -16,6 +16,9 @@ export class ReviewService {
   }
 
   findAll(employeeId: number) {
-    return this.reviewRepository.findAll({ where: { employeeId } });
+    return this.reviewRepository.findAll({
+      where: { employeeId },
+      order: [['createdAt', 'DESC']],
+    });
   }
 }

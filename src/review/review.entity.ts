@@ -32,7 +32,7 @@ export class Review extends Model<Review, IReview> {
   employeeId: number;
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: false,
   })
   review: string;
