@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Employee } from './employee.entity';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { Review } from '../review/review.entity';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class EmployeeService {
@@ -33,6 +34,16 @@ export class EmployeeService {
     });
   }
 
+  getEmployeesByFullname(fullname: string) {
+    return this.employeeRepository.findAll({
+      where: {
+        [Op.or]: [
+          { firstname: { [Op.iLike]: `%${fullname}%` } },
+          { lastname: { [Op.iLike]: `%${fullname}%` } },
+        ],
+      },
+    });
+  }
   createEmployee(dto: CreateEmployeeDto) {
     return this.employeeRepository.create(dto);
   }

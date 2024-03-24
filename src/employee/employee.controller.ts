@@ -20,10 +20,10 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { DismissEmployeeDto } from './dto/update-employee.dto';
+import { log } from 'console';
 
 @Controller('employee')
 @ApiTags('employee')
-@UseGuards(AuthGuard)
 export class EmployeeController {
   constructor(
     private employeeService: EmployeeService,
@@ -31,6 +31,7 @@ export class EmployeeController {
   ) {}
 
   @Get('getAll/:companyId')
+  @UseGuards(AuthGuard)
   @ApiResponse({ status: 200, type: [CreateEmployeeResponseDto] })
   async getAllEmployees(@Param('companyId') companyId: number) {
     const employees = await this.employeeService.getAllEmployees(companyId);
@@ -39,12 +40,22 @@ export class EmployeeController {
   }
 
   @Get('getOne/:employeeId')
+  @UseGuards(AuthGuard)
   @ApiResponse({ status: 200, type: CreateEmployeeResponseDto })
   async getOneEmployee(@Param('employeeId') employeeId: number) {
     return this.employeeService.getEmployeeById(employeeId);
   }
 
+  @Get('search/:fullname')
+  @ApiResponse({ status: 200, type: [CreateEmployeeResponseDto] })
+  async getOneEmployeeByFullname(@Param('fullname') fullname: string) {
+    console.log(123, fullname);
+
+    return this.employeeService.getEmployeesByFullname(fullname);
+  }
+
   @Post('create')
+  @UseGuards(AuthGuard)
   @UseInterceptors(FileInterceptor('avatarUrl'))
   @ApiResponse({ status: 200, type: CreateEmployeeResponseDto })
   async createEmployee(
@@ -72,6 +83,7 @@ export class EmployeeController {
   }
 
   @Put('dismiss/:employeeId')
+  @UseGuards(AuthGuard)
   @ApiResponse({ status: 200, description: 'Employee updated successfully' })
   async dismissEmployee(
     @Param('employeeId') employeeId: number,
@@ -86,6 +98,7 @@ export class EmployeeController {
   }
 
   @Delete('delete/:employeeId')
+  @UseGuards(AuthGuard)
   @ApiResponse({ status: 200, description: 'Employee deleted successfully' })
   async deleteEmployee(@Param('employeeId') employeeId: number) {
     await this.employeeService.deleteEmployee(employeeId);
