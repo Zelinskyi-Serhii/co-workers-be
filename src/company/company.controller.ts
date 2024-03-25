@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   Req,
   UploadedFile,
   UseGuards,
@@ -16,6 +17,7 @@ import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
   CreateCompanyDto,
   CreateCompanyResponseDto,
+  UpdateCompanyDto,
 } from './dto/create-company.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
@@ -43,6 +45,7 @@ export class CompanyController {
       ownerName: company.ownerName,
     }));
   }
+
   @Get('/:companyId')
   @ApiResponse({ status: 200, type: CreateCompanyResponseDto })
   async getCompanyById(
@@ -76,6 +79,27 @@ export class CompanyController {
       ownedAt: createdCompany.ownedAt,
       ownerName: createdCompany.ownerName,
     };
+  }
+
+  @Put('update/:companyId')
+  @UseInterceptors(FileInterceptor('avatarUrl'))
+  @ApiResponse({ status: 200, description: 'Company updated successfully' })
+  async updateCompany(
+    @UploadedFile() avatarUrl,
+    @Body() updateCompanyDto: UpdateCompanyDto,
+  ) {
+    let url: string;
+
+    if (avatarUrl) {
+      url = await this.cloudinaryService.uploadImage(avatarUrl);
+    }
+
+    await this.companyService.updateCompany(
+      { ...updateCompanyDto, avatarUrl: url },
+      updateCompanyDto.id,
+    );
+
+    return { message: 'Company updated successfully' };
   }
 
   @Delete('delete/:id')
