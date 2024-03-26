@@ -43,6 +43,7 @@ export class CompanyController {
       avatarUrl: company.avatarUrl,
       ownedAt: company.ownedAt,
       ownerName: company.ownerName,
+      publickId: company.publickId,
     }));
   }
 
@@ -113,5 +114,29 @@ export class CompanyController {
     await this.companyService.deleteCompany(id, currentUserId);
 
     return { message: 'Company deleted successfully' };
+  }
+
+  @Get('generateId/:companyId')
+  @ApiResponse({ status: 200, description: 'Publick id created syccessfully' })
+  async generatePublickId(@Param('companyId') companyId: number) {
+    const res = await this.companyService.generatePublickId(companyId);
+
+    return { message: 'Publick id created syccessfully', data: res };
+  }
+
+  @Get('getAll/:publickId')
+  @ApiResponse({ status: 200, type: [CreateCompanyResponseDto] })
+  async getAllCompaniesByPublickId(@Param('publickId') publickId: string) {
+    const companies =
+      await this.companyService.getAllCompaniesbyPublickId(publickId);
+
+    return companies.map(company => ({
+      id: company.id,
+      name: company.name,
+      avatarUrl: company.avatarUrl,
+      ownedAt: company.ownedAt,
+      ownerName: company.ownerName,
+      publickId: company.publickId,
+    }));
   }
 }

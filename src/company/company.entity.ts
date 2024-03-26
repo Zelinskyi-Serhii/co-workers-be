@@ -14,6 +14,7 @@ interface ICompany {
   avatarUrl: string;
   ownedAt: string;
   ownerName: string;
+  publickId: string | null;
 }
 
 @Table({
@@ -57,6 +58,12 @@ export class Company extends Model<Company, ICompany> {
   })
   ownerName: string;
 
-  @BelongsTo(() => Auth, { onDelete: 'CASCADE', foreignKey: 'userId' })
+  @Column({
+    type: DataType.STRING,
+    defaultValue: null,
+  })
+  publickId: string | null;
+
+  @BelongsTo(() => Auth, { foreignKey: 'userId' })
   user: Auth;
 }

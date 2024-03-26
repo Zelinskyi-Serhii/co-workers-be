@@ -1,3 +1,4 @@
+import { v4 as uuidv } from 'uuid';
 import { Inject, Injectable } from '@nestjs/common';
 import { Company } from './company.entity';
 import { CreateCompanyDto, UpdateCompanyDto } from './dto/create-company.dto';
@@ -10,6 +11,10 @@ export class CompanyService {
   ) {}
   getAllCompanies(userId: number) {
     return this.companyRepository.findAll({ where: { userId } });
+  }
+
+  getAllCompaniesbyPublickId(publickId: string) {
+    return this.companyRepository.findAll({ where: { publickId } });
   }
 
   getCompanyById(companyId: number, userId: number) {
@@ -32,5 +37,12 @@ export class CompanyService {
       where: { id, userId },
       cascade: true,
     });
+  }
+
+  generatePublickId(companyId: number) {
+    return this.companyRepository.update(
+      { publickId: uuidv() },
+      { where: { id: companyId } },
+    );
   }
 }

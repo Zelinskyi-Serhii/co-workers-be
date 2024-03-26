@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Employee } from './employee.entity';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { Review } from '../review/review.entity';
-import { Op } from 'sequelize';
+import { Op, where } from 'sequelize';
 
 @Injectable()
 export class EmployeeService {
@@ -44,6 +44,7 @@ export class EmployeeService {
       },
     });
   }
+
   createEmployee(dto: CreateEmployeeDto) {
     return this.employeeRepository.create(dto);
   }
