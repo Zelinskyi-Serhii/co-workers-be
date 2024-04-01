@@ -40,7 +40,7 @@ export class EmployeeController {
   }
 
   @Get('getOne/:employeeId')
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   @ApiResponse({ status: 200, type: CreateEmployeeResponseDto })
   async getOneEmployee(@Param('employeeId') employeeId: number) {
     return this.employeeService.getEmployeeById(employeeId);

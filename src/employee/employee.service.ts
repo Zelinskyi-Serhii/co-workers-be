@@ -16,7 +16,7 @@ export class EmployeeService {
       where: { companyId },
       attributes: { exclude: ['companyId', 'createdAt', 'updatedAt'] },
       order: [
-        ['dismissed', 'ASC'],
+        ['dismissed', 'DESC'],
         ['hireDate', 'DESC'],
       ],
     });

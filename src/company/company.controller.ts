@@ -24,7 +24,6 @@ import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @ApiTags('company')
 @Controller('company')
-@UseGuards(AuthGuard)
 export class CompanyController {
   constructor(
     private companyService: CompanyService,
@@ -32,6 +31,7 @@ export class CompanyController {
   ) {}
 
   @Get('getAll')
+  @UseGuards(AuthGuard)
   @ApiResponse({ status: 200, type: [CreateCompanyResponseDto] })
   async getAllCompanies(@Req() req: { currentUserId: number }) {
     const { currentUserId } = req;
@@ -48,6 +48,7 @@ export class CompanyController {
   }
 
   @Get('/:companyId')
+  @UseGuards(AuthGuard)
   @ApiResponse({ status: 200, type: CreateCompanyResponseDto })
   async getCompanyById(
     @Param('companyId') companyId: number,
@@ -58,6 +59,7 @@ export class CompanyController {
   }
 
   @Post('create')
+  @UseGuards(AuthGuard)
   @UseInterceptors(FileInterceptor('avatarUrl'))
   @ApiResponse({ status: 201, type: CreateCompanyResponseDto })
   async createCompany(
@@ -83,6 +85,7 @@ export class CompanyController {
   }
 
   @Put('update/:companyId')
+  @UseGuards(AuthGuard)
   @UseInterceptors(FileInterceptor('avatarUrl'))
   @ApiResponse({ status: 200, description: 'Company updated successfully' })
   async updateCompany(
@@ -104,6 +107,7 @@ export class CompanyController {
   }
 
   @Delete('delete/:id')
+  @UseGuards(AuthGuard)
   @ApiResponse({ status: 200, description: 'Company deleted successfully' })
   async deleteCompany(
     @Param('id') id: number,
@@ -117,6 +121,7 @@ export class CompanyController {
   }
 
   @Get('generateId/:companyId')
+  @UseGuards(AuthGuard)
   @ApiResponse({ status: 200, description: 'Publick id created syccessfully' })
   async generatePublickId(@Param('companyId') companyId: number) {
     const res = await this.companyService.generatePublickId(companyId);
@@ -124,19 +129,9 @@ export class CompanyController {
     return { message: 'Publick id created syccessfully', data: res };
   }
 
-  @Get('getAll/:publickId')
+  @Get('getByPublicId/:publicId')
   @ApiResponse({ status: 200, type: [CreateCompanyResponseDto] })
-  async getAllCompaniesByPublickId(@Param('publickId') publickId: string) {
-    const companies =
-      await this.companyService.getAllCompaniesbyPublickId(publickId);
-
-    return companies.map(company => ({
-      id: company.id,
-      name: company.name,
-      avatarUrl: company.avatarUrl,
-      ownedAt: company.ownedAt,
-      ownerName: company.ownerName,
-      publickId: company.publickId,
-    }));
+  async getCompanyByPublickId(@Param('publicId') publicId: string) {
+    return this.companyService.getCompanybyPublickId(publicId);
   }
 }

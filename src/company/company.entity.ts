@@ -2,10 +2,12 @@ import {
   BelongsTo,
   Column,
   DataType,
+  HasMany,
   Model,
   Table,
 } from 'sequelize-typescript';
 import { Auth } from '../auth/auth.entity';
+import { Employee } from 'src/employee/employee.entity';
 
 interface ICompany {
   id: number;
@@ -66,4 +68,7 @@ export class Company extends Model<Company, ICompany> {
 
   @BelongsTo(() => Auth, { foreignKey: 'userId' })
   user: Auth;
+
+  @HasMany(() => Employee, { onDelete: 'CASCADE', foreignKey: 'companyId' })
+  employee: Employee;
 }
