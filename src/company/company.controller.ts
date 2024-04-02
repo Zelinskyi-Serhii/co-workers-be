@@ -17,6 +17,7 @@ import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
   CreateCompanyDto,
   CreateCompanyResponseDto,
+  PublicReviewDtoResponse,
   UpdateCompanyDto,
 } from './dto/create-company.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -133,5 +134,14 @@ export class CompanyController {
   @ApiResponse({ status: 200, type: [CreateCompanyResponseDto] })
   async getCompanyByPublickId(@Param('publicId') publicId: string) {
     return this.companyService.getCompanybyPublickId(publicId);
+  }
+
+  @Get('getReviews/:companyId/:employeeId')
+  @ApiResponse({ status: 200, type: PublicReviewDtoResponse })
+  async getPublicReviews(
+    @Param('companyId') companyId: string,
+    @Param('employeeId') employeeId: string,
+  ) {
+    return this.companyService.getPublicReviews(companyId, employeeId);
   }
 }

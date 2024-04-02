@@ -3,6 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Company } from './company.entity';
 import { CreateCompanyDto, UpdateCompanyDto } from './dto/create-company.dto';
 import { Employee } from '../employee/employee.entity';
+import { Review } from '../review/review.entity';
 
 @Injectable()
 export class CompanyService {
@@ -26,6 +27,26 @@ export class CompanyService {
       order: [
         [{ model: Employee, as: 'employee' }, 'dismissed', 'DESC'],
         [{ model: Employee, as: 'employee' }, 'hireDate', 'DESC'],
+      ],
+    });
+  }
+
+  getPublicReviews(companyId: string, employeeId: string) {
+    return this.companyRepository.findOne({
+      where: { publicId: companyId },
+      include: [
+        {
+          model: Employee,
+          attributes: { exclude: ['createdAt', 'updatedAt', 'companyId'] },
+          where: { id: employeeId },
+
+          include: [
+            {
+              model: Review,
+              where: { employeeId },
+            },
+          ],
+        },
       ],
     });
   }
