@@ -43,7 +43,7 @@ export class CompanyController {
       avatarUrl: company.avatarUrl,
       ownedAt: company.ownedAt,
       ownerName: company.ownerName,
-      publickId: company.publickId,
+      publicId: company.publicId,
     }));
   }
 

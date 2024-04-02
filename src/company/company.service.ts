@@ -14,9 +14,9 @@ export class CompanyService {
     return this.companyRepository.findAll({ where: { userId } });
   }
 
-  getCompanybyPublickId(publickId: string) {
+  getCompanybyPublickId(publicId: string) {
     return this.companyRepository.findOne({
-      where: { publickId },
+      where: { publicId },
       include: [
         {
           model: Employee,
@@ -55,7 +55,7 @@ export class CompanyService {
 
   generatePublickId(companyId: number) {
     return this.companyRepository.update(
-      { publickId: uuidv() },
+      { publicId: uuidv() },
       { where: { id: companyId } },
     );
   }

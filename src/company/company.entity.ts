@@ -16,7 +16,7 @@ interface ICompany {
   avatarUrl: string;
   ownedAt: string;
   ownerName: string;
-  publickId: string | null;
+  publicId: string | null;
 }
 
 @Table({
@@ -64,7 +64,7 @@ export class Company extends Model<Company, ICompany> {
     type: DataType.STRING,
     defaultValue: null,
   })
-  publickId: string | null;
+  publicId: string | null;
 
   @BelongsTo(() => Auth, { foreignKey: 'userId' })
   user: Auth;
