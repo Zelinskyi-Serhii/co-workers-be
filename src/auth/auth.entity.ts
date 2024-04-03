@@ -7,6 +7,7 @@ export interface IAuth {
   nickname: string;
   avatarUrl: string;
   isAdmin: boolean;
+  refreshToken: string | null;
 }
 
 @Table({
@@ -54,4 +55,10 @@ export class Auth extends Model<Auth, IAuth> {
     defaultValue: false,
   })
   isAdmin: boolean;
+
+  @Column({
+    type: DataType.STRING,
+    defaultValue: null,
+  })
+  refreshToken: string | null;
 }
