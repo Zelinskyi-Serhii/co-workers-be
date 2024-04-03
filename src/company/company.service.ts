@@ -43,7 +43,6 @@ export class CompanyService {
           include: [
             {
               model: Review,
-              where: { employeeId },
             },
           ],
         },

@@ -42,6 +42,7 @@ export class EmployeeService {
           { lastname: { [Op.iLike]: `%${fullname}%` } },
         ],
       },
+      limit: 20,
     });
   }
 

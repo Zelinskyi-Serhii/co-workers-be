@@ -145,6 +145,12 @@ export class CompanyController {
     @Param('companyId') companyId: string,
     @Param('employeeId') employeeId: string,
   ) {
-    return this.companyService.getPublicReviews(companyId, employeeId);
+    const res = await this.companyService.getPublicReviews(
+      companyId,
+      employeeId,
+    );
+    console.log(res);
+
+    return res;
   }
 }
