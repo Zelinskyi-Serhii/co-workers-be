@@ -51,12 +51,15 @@ export class CompanyController {
   @Get('/:companyId')
   @UseGuards(AuthGuard)
   @ApiResponse({ status: 200, type: CreateCompanyResponseDto })
-  async getCompanyById(
+  async getCompanyByIdWithEmployees(
     @Param('companyId') companyId: number,
     @Req() req: { currentUserId: number },
   ) {
     const currentUserId = req.currentUserId;
-    return this.companyService.getCompanyById(companyId, currentUserId);
+    return this.companyService.getCompanyByIdWithEmployees(
+      companyId,
+      currentUserId,
+    );
   }
 
   @Post('create')

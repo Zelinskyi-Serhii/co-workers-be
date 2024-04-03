@@ -51,9 +51,15 @@ export class CompanyService {
     });
   }
 
-  getCompanyById(companyId: number, userId: number) {
+  getCompanyByIdWithEmployees(companyId: number, userId: number) {
     return this.companyRepository.findOne({
-      where: { id: companyId, userId: userId },
+      where: { id: companyId, userId },
+      include: [
+        {
+          model: Employee,
+          attributes: { exclude: ['createdAt', 'updatedAt'] },
+        },
+      ],
     });
   }
 
