@@ -39,6 +39,7 @@ export class AuthGuard implements CanActivate {
 
       req.currentUserId = user.id;
       req.currentUserEmail = user.email;
+
       return true;
     } catch (e) {
       throw new UnauthorizedException({

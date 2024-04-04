@@ -29,6 +29,10 @@ export class AuthService {
     });
   }
 
+  setNewRefreshToken(email: string, refreshToken: string) {
+    return this.authRepository.update({ refreshToken }, { where: { email } });
+  }
+
   checkIsAvailableNickname(nickname: string) {
     return this.authRepository.findOne({
       where: { nickname },

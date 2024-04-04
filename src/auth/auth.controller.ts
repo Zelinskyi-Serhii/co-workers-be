@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Req,
+  UnauthorizedException,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -32,6 +33,10 @@ import {
 } from './dto/upload-avatar.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { ChangeNicknameDto } from './dto/change-nickname.dto';
+import {
+  RefreshTokenDto,
+  RefreshTokenResponseDto,
+} from './dto/refresh-token.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -51,6 +56,51 @@ export class AuthController {
     const user = await this.authService.getUserInfo(currentUserEmail);
 
     return user;
+  }
+
+  @ApiResponse({ status: 200, type: RefreshTokenResponseDto })
+  @Post('refresh')
+  async refresh(@Body() refreshTokenDto: RefreshTokenDto) {
+    const { refreshToken } = refreshTokenDto;
+
+    try {
+      const jwtData: { email: string } =
+        await this.jwtService.verifyAsync(refreshToken);
+
+      const userByRefreshToken = await this.authService.getUserByEmail(
+        jwtData.email,
+      );
+
+      if (
+        !userByRefreshToken.refreshToken ||
+        userByRefreshToken.refreshToken !== refreshToken
+      ) {
+        throw new UnauthorizedException({ mesaage: 'Wrong refresh token' });
+      }
+
+      const { email, id } = userByRefreshToken;
+
+      const newAccessToken = await this.jwtService.signAsync({
+        email,
+        id,
+      });
+
+      const newRefreshToken = await this.jwtService.signAsync(
+        {
+          email,
+        },
+        { expiresIn: '48h' },
+      );
+
+      this.authService.setNewRefreshToken(email, newRefreshToken);
+
+      return {
+        refreshToken: newRefreshToken,
+        accessToken: newAccessToken,
+      };
+    } catch {
+      throw new UnauthorizedException({ mesaage: 'Wrong refresh token' });
+    }
   }
 
   @ApiResponse({ status: 201, type: LoginUserResponceDto })
@@ -75,8 +125,18 @@ export class AuthController {
       email: user.email,
     });
 
+    const refreshToken = await this.jwtService.signAsync(
+      {
+        email: user.email,
+      },
+      { expiresIn: '48h' },
+    );
+
+    this.authService.setNewRefreshToken(user.email, refreshToken);
+
     return {
       accessToken,
+      refreshToken,
       email: user.email,
       nickname: user.nickname,
       avatarUrl: user.avatarUrl,
@@ -112,8 +172,18 @@ export class AuthController {
       email: user.email,
     });
 
+    const refreshToken = await this.jwtService.signAsync(
+      {
+        email: user.email,
+      },
+      { expiresIn: '48h' },
+    );
+
+    this.authService.setNewRefreshToken(user.email, refreshToken);
+
     return {
       accessToken,
+      refreshToken,
       email: user.email,
       nickname: user.nickname,
       avatarUrl: user.avatarUrl,
