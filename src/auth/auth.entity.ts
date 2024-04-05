@@ -1,4 +1,5 @@
-import { Table, Column, Model, DataType } from 'sequelize-typescript';
+import { Table, Column, Model, DataType, HasMany } from 'sequelize-typescript';
+import { Company } from 'src/company/company.entity';
 
 export interface IAuth {
   id: number;
@@ -60,4 +61,7 @@ export class Auth extends Model<Auth, IAuth> {
     defaultValue: null,
   })
   refreshToken: string | null;
+
+  @HasMany(() => Company, { onDelete: 'CASCADE', foreignKey: 'userId' })
+  company: Company;
 }
