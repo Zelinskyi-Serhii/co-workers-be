@@ -117,7 +117,7 @@ export class AuthController {
     });
 
     if (!isCreated) {
-      throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
+      throw new HttpException('User already exists', HttpStatus.CONFLICT);
     }
 
     const accessToken = await this.jwtService.signAsync({
