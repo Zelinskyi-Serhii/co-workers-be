@@ -95,6 +95,8 @@ export class CompanyController {
   async updateCompany(
     @UploadedFile() avatarUrl,
     @Body() updateCompanyDto: UpdateCompanyDto,
+    @Param('companyId') companyId,
+    @Req() req: { currentUserId: number },
   ) {
     let url: string;
 
@@ -104,7 +106,8 @@ export class CompanyController {
 
     await this.companyService.updateCompany(
       { ...updateCompanyDto, avatarUrl: url },
-      updateCompanyDto.id,
+      companyId,
+      req.currentUserId,
     );
 
     return { message: 'Company updated successfully' };

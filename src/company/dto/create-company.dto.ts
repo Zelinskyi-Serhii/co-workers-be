@@ -81,8 +81,4 @@ export class PublicReviewDtoResponse {
   readonly review: ReviewDto[];
 }
 
-export class UpdateCompanyDto extends PartialType(CreateCompanyDto) {
-  @ApiProperty({ example: 1 })
-  @IsNotEmpty()
-  readonly id: number;
-}
+export class UpdateCompanyDto extends PartialType(CreateCompanyDto) {}

@@ -66,9 +66,9 @@ export class CompanyService {
     return this.companyRepository.create({ ...company, userId: currentUserId });
   }
 
-  updateCompany(company: UpdateCompanyDto, companyId: number) {
+  updateCompany(company: UpdateCompanyDto, companyId: number, userId: number) {
     return this.companyRepository.update(company, {
-      where: { id: companyId },
+      where: { id: companyId, userId },
     });
   }
 
