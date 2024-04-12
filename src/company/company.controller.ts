@@ -152,7 +152,6 @@ export class CompanyController {
       companyId,
       employeeId,
     );
-    console.log(res);
 
     return res;
   }

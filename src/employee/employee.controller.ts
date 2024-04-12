@@ -20,7 +20,6 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { DismissEmployeeDto } from './dto/update-employee.dto';
-import { log } from 'console';
 
 @Controller('employee')
 @ApiTags('employee')
@@ -49,8 +48,6 @@ export class EmployeeController {
   @Get('search/:fullname')
   @ApiResponse({ status: 200, type: [CreateEmployeeResponseDto] })
   async getOneEmployeeByFullname(@Param('fullname') fullname: string) {
-    console.log(123, fullname);
-
     return this.employeeService.getEmployeesByFullname(fullname);
   }
 
