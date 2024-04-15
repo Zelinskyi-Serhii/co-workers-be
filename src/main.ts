@@ -9,7 +9,9 @@ import { ValidationPipe } from '@nestjs/common';
   app.setGlobalPrefix('api/v1');
   app.enableCors({
     origin: ['http://localhost:3000', 'https://co-workers-fe.vercel.app'],
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE, OPTIONS',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    preflightContinue: true,
+    optionsSuccessStatus: 200,
   });
   app.useGlobalPipes(new ValidationPipe());
 
