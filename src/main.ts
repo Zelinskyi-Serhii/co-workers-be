@@ -5,7 +5,8 @@ import { getSwaggerDocument } from './swagger';
 import { ValidationPipe } from '@nestjs/common';
 
 (async () => {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {cors: true});
+  
   app.setGlobalPrefix('api/v1');
   app.enableCors({
     origin: ['http://localhost:3000', 'https://co-workers-fe.vercel.app'],
