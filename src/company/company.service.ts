@@ -12,7 +12,7 @@ export class CompanyService {
     private companyRepository: typeof Company,
   ) {}
   getAllCompanies(userId: number) {
-    return this.companyRepository.findAll({ where: { userId } });
+    return this.companyRepository.findAll({ where: { userId }, order: [['createdAt', 'DESC']] });
   }
 
   getCompanybyPublickId(publicId: string) {
@@ -58,6 +58,10 @@ export class CompanyService {
           model: Employee,
           attributes: { exclude: ['createdAt', 'updatedAt'] },
         },
+      ],
+      order: [
+        [{ model: Employee, as: 'employee' }, 'hireDate', 'DESC'],
+        [{ model: Employee, as: 'employee' }, 'dismissed', 'DESC'],
       ],
     });
   }
