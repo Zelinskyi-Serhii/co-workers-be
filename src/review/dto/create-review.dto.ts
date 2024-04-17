@@ -6,15 +6,14 @@ export class ReviewDto {
   readonly id: number;
 
   @ApiProperty({ example: 1 })
-  @IsNumber(
-    { allowInfinity: false, allowNaN: false },
-    { message: 'Id must be integer' },
+  @IsString(
+    { message: 'id is required field' },
   )
-  readonly employeeId: number;
+  readonly employeeId: string;
 
   @ApiProperty({ example: 'This is a goob boy' })
   @IsString({ message: 'Review must be a string' })
-  @IsNotEmpty({ message: 'Review couldn`t  be empty' })
+  @IsNotEmpty({ message: 'Review couldn`t be empty' })
   readonly review: string;
 }
 

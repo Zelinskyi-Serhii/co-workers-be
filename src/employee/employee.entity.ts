@@ -1,3 +1,4 @@
+import { v4 as uuidv } from 'uuid';
 import {
   BelongsTo,
   Column,
@@ -10,7 +11,7 @@ import { Company } from '../company/company.entity';
 import { Review } from '../review/review.entity';
 
 interface IEmployee {
-  id: number;
+  id: string;
   companyId: number;
   firstname: string;
   lastname: string;
@@ -26,11 +27,11 @@ interface IEmployee {
 })
 export class Employee extends Model<Employee, IEmployee> {
   @Column({
-    type: DataType.INTEGER,
+    type: DataType.UUID,
     primaryKey: true,
-    autoIncrement: true,
+    defaultValue: uuidv(),
   })
-  id: number;
+  id: string;
 
   @Column({
     type: DataType.INTEGER,

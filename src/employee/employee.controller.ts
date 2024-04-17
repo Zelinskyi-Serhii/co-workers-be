@@ -61,6 +61,8 @@ export class EmployeeController {
   ) {
     const url = await this.cloudinaryService.uploadImage(avatarUrl);
 
+    console.log(createEmployeeDto);
+
     const employee = await this.employeeService.createEmployee({
       ...createEmployeeDto,
       companyId: Number(createEmployeeDto.companyId),

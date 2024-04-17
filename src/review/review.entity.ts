@@ -9,7 +9,7 @@ import { Employee } from '../employee/employee.entity';
 
 interface IReview {
   id: number;
-  employeeId: number;
+  employeeId: string;
   review: string;
 }
 
@@ -26,10 +26,10 @@ export class Review extends Model<Review, IReview> {
   id: number;
 
   @Column({
-    type: DataType.INTEGER,
+    type: DataType.UUID,
     allowNull: false,
   })
-  employeeId: number;
+  employeeId: string;
 
   @Column({
     type: DataType.TEXT,
