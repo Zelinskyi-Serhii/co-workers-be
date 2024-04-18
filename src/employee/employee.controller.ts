@@ -39,7 +39,6 @@ export class EmployeeController {
   }
 
   @Get('getOne/:employeeId')
-  // @UseGuards(AuthGuard)
   @ApiResponse({ status: 200, type: CreateEmployeeResponseDto })
   async getOneEmployee(@Param('employeeId') employeeId: number) {
     return this.employeeService.getEmployeeById(employeeId);
@@ -60,8 +59,6 @@ export class EmployeeController {
     @UploadedFile() avatarUrl,
   ) {
     const url = await this.cloudinaryService.uploadImage(avatarUrl);
-
-    console.log(createEmployeeDto);
 
     const employee = await this.employeeService.createEmployee({
       ...createEmployeeDto,

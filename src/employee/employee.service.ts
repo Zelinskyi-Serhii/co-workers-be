@@ -2,7 +2,13 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Employee } from './employee.entity';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { Review } from '../review/review.entity';
-import { Op, where } from 'sequelize';
+import { Op } from 'sequelize';
+
+type WhereCondition = {
+  [key: string]: {
+    [Op.iLike]: string;
+  };
+}[];
 
 @Injectable()
 export class EmployeeService {
@@ -35,11 +41,26 @@ export class EmployeeService {
   }
 
   getEmployeesByFullname(fullname: string) {
+    const [left, right] = fullname.split(' ');
+  
+    let whereConditionLeft: WhereCondition = [
+      { firstname: { [Op.iLike]: `%${left}%` } },
+    ];
+    let whereConditionRight: WhereCondition = [
+      { lastname: { [Op.iLike]: `%${left}%` } }
+      ,
+    ];
+  
+    if (right) {
+      whereConditionLeft.push({ lastname: { [Op.iLike]: `%${right}%` } });
+      whereConditionRight.push({ firstname: { [Op.iLike]: `%${right}%` } });
+    }
+  
     return this.employeeRepository.findAll({
       where: {
         [Op.or]: [
-          { firstname: { [Op.iLike]: `%${fullname}%` } },
-          { lastname: { [Op.iLike]: `%${fullname}%` } },
+          whereConditionLeft,
+          whereConditionRight,
         ],
       },
       limit: 20,
