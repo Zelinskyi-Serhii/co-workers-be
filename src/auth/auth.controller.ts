@@ -22,6 +22,8 @@ import {
   GetUserInfo,
   LoginUserDto,
   LoginUserResponceDto,
+  ResetPassword,
+  VarifyResetCode,
 } from './dto/login-user.dto';
 import { CheckNicknameDto } from './dto/check-nickname.dto';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
@@ -37,6 +39,7 @@ import {
   RefreshTokenDto,
   RefreshTokenResponseDto,
 } from './dto/refresh-token.dto';
+import { NodemailerService } from 'src/nodemailer/nodemailer.service';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -45,6 +48,7 @@ export class AuthController {
     private authService: AuthService,
     private jwtService: JwtService,
     private cloudinaryService: CloudinaryService,
+    private mailService: NodemailerService,
   ) {}
 
   @ApiResponse({ status: 200, type: GetUserInfo })
@@ -273,5 +277,47 @@ export class AuthController {
     await this.authService.deleteUserByEmail(currentUserEmail);
 
     return { message: 'User deleted successfully' };
+  }
+
+  @Post('resetPassword')
+  @ApiResponse({ status: 200, description: 'Activation code sended to email' })
+  async resetPassword(@Body() resetPasswordEmail: ResetPassword) {
+    const { email } = resetPasswordEmail;
+
+    const user = await this.authService.getUserByEmail(email);
+
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    }
+    
+    const resetPasswordCode = Math.floor(100000 + Math.random() * 900000);
+
+    const jwtResetPasswordCode = await this.jwtService.signAsync({resetPasswordCode});
+
+    this.authService.updateUser(user.id, { resetPasswordCode: jwtResetPasswordCode });
+
+    await this.mailService.sendResetPasswordCode(email, resetPasswordCode);
+
+    this.mailService.sendResetPasswordCode(email, resetPasswordCode);
+
+    return { message: 'Activation code sended to email' };
+  }
+
+  @Post('verifyResetCode')
+  @ApiResponse({ status: 200, description: 'Code is mutched' })
+  async verifyResetCode(@Body() resetPasswordData: VarifyResetCode) {
+    const { email, code } = resetPasswordData;
+    const user = await this.authService.getUserByEmail(email);
+
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    }
+
+    const decodedCode = await this.jwtService.verifyAsync(user.resetPasswordCode);
+
+    if (user.resetPasswordCode !== decodedCode.resetPasswordCode) {
+
+      return { message: 'Code is mutched' };
+    }
   }
 }

@@ -9,6 +9,7 @@ export interface IAuth {
   avatarUrl: string;
   isAdmin: boolean;
   refreshToken: string | null;
+  resetPasswordCode: string | null;
 }
 
 @Table({
@@ -61,6 +62,12 @@ export class Auth extends Model<Auth, IAuth> {
     defaultValue: null,
   })
   refreshToken: string | null;
+
+  @Column({
+    type: DataType.STRING,
+    defaultValue: null,
+  })
+  resetPasswordCode: string;
 
   @HasMany(() => Company, { onDelete: 'CASCADE', foreignKey: 'userId' })
   company: Company;

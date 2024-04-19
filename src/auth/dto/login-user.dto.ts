@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString, Length } from 'class-validator';
+import { IsEmail, IsNumber, IsString, Length } from 'class-validator';
 
 export class LoginUserDto {
   @ApiProperty({ example: 'John' })
@@ -35,4 +35,20 @@ export class GetUserInfo {
 
   @ApiProperty({ example: 'https://example.com' })
   readonly avatarUrl: string;
+}
+
+export class ResetPassword {
+  @ApiProperty({ example: 'email@example.com' })
+  @IsEmail({}, { message: 'Invalid email format' })
+  readonly email: string;
+}
+
+export class VarifyResetCode {
+  @ApiProperty({ example: 'email@example.com' })
+  @IsEmail({}, { message: 'Invalid email format' })
+  readonly email: string;
+
+  @ApiProperty({ example: 'email@example.com' })
+  @IsNumber({}, { message: 'Invalid code format' })
+  readonly code: number;
 }
