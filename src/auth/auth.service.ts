@@ -25,7 +25,15 @@ export class AuthService {
   getUserInfo(email: string) {
     return this.authRepository.findOne({
       where: { email },
-      attributes: { exclude: ['createdAt', 'password'] },
+      attributes: {
+        exclude: [
+          'createdAt',
+          'password',
+          'updatedAt',
+          'resetPasswordCode',
+          'refreshToken',
+        ],
+      },
     });
   }
 

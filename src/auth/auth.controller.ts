@@ -23,6 +23,7 @@ import {
   LoginUserDto,
   LoginUserResponceDto,
   ResetPassword,
+  SendResetPasswordCode,
   VarifyResetCode,
 } from './dto/login-user.dto';
 import { CheckNicknameDto } from './dto/check-nickname.dto';
@@ -110,10 +111,9 @@ export class AuthController {
   @ApiResponse({ status: 201, type: LoginUserResponceDto })
   @Post('signup')
   async create(@Body() createUserDto: CreateUserDto) {
-    const hashedPassword = await bcrypt.hash(
-      createUserDto.password,
-      Number(process.env.PASSWORD_SALT),
-    );
+    const salt = await bcrypt.genSalt(Number(process.env.PASSWORD_SALT));
+
+    const hashedPassword = await bcrypt.hash(createUserDto.password, salt);
 
     const [user, isCreated] = await this.authService.create({
       ...createUserDto,
@@ -279,9 +279,11 @@ export class AuthController {
     return { message: 'User deleted successfully' };
   }
 
-  @Post('resetPassword')
+  @Post('sendResetPasswordCode')
   @ApiResponse({ status: 200, description: 'Activation code sended to email' })
-  async resetPassword(@Body() resetPasswordEmail: ResetPassword) {
+  async sendResetPasswordCode(
+    @Body() resetPasswordEmail: SendResetPasswordCode,
+  ) {
     const { email } = resetPasswordEmail;
 
     const user = await this.authService.getUserByEmail(email);
@@ -289,12 +291,19 @@ export class AuthController {
     if (!user) {
       throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
     }
-    
+
     const resetPasswordCode = Math.floor(100000 + Math.random() * 900000);
 
-    const jwtResetPasswordCode = await this.jwtService.signAsync({resetPasswordCode});
+    const jwtResetPasswordCode = await this.jwtService.signAsync(
+      {
+        resetPasswordCode,
+      },
+      { expiresIn: '15m' },
+    );
 
-    this.authService.updateUser(user.id, { resetPasswordCode: jwtResetPasswordCode });
+    this.authService.updateUser(user.id, {
+      resetPasswordCode: jwtResetPasswordCode,
+    });
 
     await this.mailService.sendResetPasswordCode(email, resetPasswordCode);
 
@@ -304,20 +313,67 @@ export class AuthController {
   }
 
   @Post('verifyResetCode')
-  @ApiResponse({ status: 200, description: 'Code is mutched' })
-  async verifyResetCode(@Body() resetPasswordData: VarifyResetCode) {
-    const { email, code } = resetPasswordData;
+  @ApiResponse({ status: 200, description: 'Code is equal' })
+  async verifyResetCode(@Body() verifyResetCodeData: VarifyResetCode) {
+    const { email, code } = verifyResetCodeData;
     const user = await this.authService.getUserByEmail(email);
 
     if (!user) {
       throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
     }
 
-    const decodedCode = await this.jwtService.verifyAsync(user.resetPasswordCode);
+    let decodedCode: { resetPasswordCode: number };
 
-    if (user.resetPasswordCode !== decodedCode.resetPasswordCode) {
-
-      return { message: 'Code is mutched' };
+    try {
+      decodedCode = await this.jwtService.verifyAsync(user.resetPasswordCode);
+    } catch (error) {
+      throw new HttpException('Code is expired', HttpStatus.BAD_REQUEST);
     }
+
+    if (code !== decodedCode.resetPasswordCode) {
+      throw new HttpException(
+        'The code does not match',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    return { message: 'Code is equal' };
+  }
+
+  @Post('resetPassword')
+  @ApiResponse({ status: 200, description: 'Password changed successfully' })
+  async resetPawwsord(@Body() resetPassword: ResetPassword) {
+    const { email, code, password } = resetPassword;
+
+    const user = await this.authService.getUserByEmail(email);
+
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    }
+
+    let decodedCode: { resetPasswordCode: number };
+
+    try {
+      decodedCode = await this.jwtService.verifyAsync(user.resetPasswordCode);
+    } catch (error) {
+      throw new HttpException('Code is expired', HttpStatus.BAD_REQUEST);
+    }
+
+    if (code !== decodedCode.resetPasswordCode) {
+      throw new HttpException(
+        'The code does not match',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const salt = await bcrypt.genSalt(Number(process.env.PASSWORD_SALT));
+
+    const newHashedPassword = await bcrypt.hash(password, salt);
+
+    user.password = newHashedPassword;
+    user.resetPasswordCode = null;
+    user.save();
+
+    return { message: 'Password changed successfully' };
   }
 }

@@ -37,7 +37,7 @@ export class GetUserInfo {
   readonly avatarUrl: string;
 }
 
-export class ResetPassword {
+export class SendResetPasswordCode {
   @ApiProperty({ example: 'email@example.com' })
   @IsEmail({}, { message: 'Invalid email format' })
   readonly email: string;
@@ -51,4 +51,19 @@ export class VarifyResetCode {
   @ApiProperty({ example: 'email@example.com' })
   @IsNumber({}, { message: 'Invalid code format' })
   readonly code: number;
+}
+
+export class ResetPassword {
+  @ApiProperty({ example: 'email@example.com' })
+  @IsEmail({}, { message: 'Invalid email format' })
+  readonly email: string;
+
+  @ApiProperty({ example: 'email@example.com' })
+  @IsNumber({}, { message: 'Invalid code format' })
+  readonly code: number;
+
+  @ApiProperty({ example: '123456' })
+  @IsString({ message: 'Invalid password format' })
+  @Length(6, 16, { message: 'Password must be between 6 and 16 characters' })
+  readonly password: string;
 }
