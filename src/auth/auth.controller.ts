@@ -307,8 +307,6 @@ export class AuthController {
 
     await this.mailService.sendResetPasswordCode(email, resetPasswordCode);
 
-    this.mailService.sendResetPasswordCode(email, resetPasswordCode);
-
     return { message: 'Activation code sended to email' };
   }
 
