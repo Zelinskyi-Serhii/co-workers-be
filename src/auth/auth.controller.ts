@@ -214,11 +214,14 @@ export class AuthController {
   @ApiResponse({ status: 200, type: UploadAvatarResponseDto })
   @Put('changeAvatar')
   @UseGuards(AuthGuard)
-  @UseInterceptors(FileInterceptor('image'))
-  async uploadAvatar(@UploadedFile() image: UploadAvatarDto, @Req() request) {
+  @UseInterceptors(FileInterceptor('avatarUrl'))
+  async uploadAvatar(
+    @UploadedFile() avatarUrl: UploadAvatarDto,
+    @Req() request,
+  ) {
     const { currentUserId } = request;
 
-    const url = await this.cloudinaryService.uploadImage(image);
+    const url = await this.cloudinaryService.uploadImage(avatarUrl);
 
     await this.authService.updateUser(currentUserId, { avatarUrl: url });
 
