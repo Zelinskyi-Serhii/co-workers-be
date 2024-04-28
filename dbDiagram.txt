@@ -5,6 +5,10 @@ Table user {
   nickname string [not null] 
   avatarURL string [not null]
   isAdmin boolean [not null]
+  refreshToken string
+  resetPasswordCode string
+  createdAt string [not null]
+  updatedAt string [not null]
 }
 
 Table company {
@@ -14,10 +18,13 @@ Table company {
   avatarUrl string [not null]
   ownedAt string [not null]
   ownerName string [not null]
+  publickId string 
+  createdAt string [not null]
+  updatedAt string [not null]
 }
 
 Table employee {
-  id integer [PK]
+  id string [PK]
   companyId integer [not null]
   firstname string [not null]
   lastname strring [not null]
@@ -25,13 +32,16 @@ Table employee {
   hireDate string [not null]
   avatarUrl string [not null]
   birthday string [not null]
-  isDismissed boolean [not null]
+  dismissed string
+  createdAt string [not null]
+  updatedAt string [not null]
 }
 
 Table reviews {
   id integer [PK]
-  employeeId integer [not null]
+  employeeId string [not null]
   review string [not null]
+  createdAt string [not null]
 }
 
 Ref: user.id < company.userId
