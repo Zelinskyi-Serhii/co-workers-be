@@ -42,26 +42,22 @@ export class EmployeeService {
 
   getEmployeesByFullname(fullname: string) {
     const [left, right] = fullname.split(' ');
-  
+
     let whereConditionLeft: WhereCondition = [
       { firstname: { [Op.iLike]: `%${left}%` } },
     ];
     let whereConditionRight: WhereCondition = [
-      { lastname: { [Op.iLike]: `%${left}%` } }
-      ,
+      { lastname: { [Op.iLike]: `%${left}%` } },
     ];
-  
+
     if (right) {
       whereConditionLeft.push({ lastname: { [Op.iLike]: `%${right}%` } });
       whereConditionRight.push({ firstname: { [Op.iLike]: `%${right}%` } });
     }
-  
+
     return this.employeeRepository.findAll({
       where: {
-        [Op.or]: [
-          whereConditionLeft,
-          whereConditionRight,
-        ],
+        [Op.or]: [whereConditionLeft, whereConditionRight],
       },
       limit: 20,
     });

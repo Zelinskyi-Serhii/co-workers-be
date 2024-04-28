@@ -1,4 +1,4 @@
-import { v4 as uuidv } from 'uuid';
+import { v4 as uuid } from 'uuid';
 import {
   BelongsTo,
   Column,
@@ -29,7 +29,7 @@ export class Employee extends Model<Employee, IEmployee> {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
-    defaultValue: uuidv(),
+    defaultValue: uuid,
   })
   id: string;
 
