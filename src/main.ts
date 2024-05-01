@@ -11,7 +11,7 @@ const PORT = 5555;
 
   app.setGlobalPrefix('api/v1');
   app.enableCors({
-    origin: ['http://localhost:3000', 'https://co-workers-fe.vercel.app'],
+    origin: ['https://co-workers-fe.vercel.app'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   });
   app.useGlobalPipes(new ValidationPipe());
